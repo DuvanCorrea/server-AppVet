@@ -1,5 +1,6 @@
 const http = require("http");
 const { parse } = require("url");
+const stringDecoder = require("string_decoder").StringDecoder;
 
 const server = http.createServer((req, res) => {
   //1- Obtener url del objeto req
@@ -8,6 +9,21 @@ const server = http.createServer((req, res) => {
 
   //2- Obtener la ruta
   const ruta = urlParseada.pathname;
+
+  //2.1- Obtener method
+  const method = req.method.toLowerCase();
+
+  //2.2- Obtener query
+  const { query = {} } = urlParseada;
+
+  //2.3- Obtener header
+  const { headers = {} } = req;
+
+  //2.4- Obtener payload, bueno si hay uno
+  const decoder = new StringDecoder("utf-8");
+  const buffer = "";
+
+  req.on("data", () => {});
 
   //3- enviar una respuesta dependiendo de la ruta
   switch (ruta) {
