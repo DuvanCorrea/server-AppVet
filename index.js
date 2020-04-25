@@ -6,6 +6,8 @@ let recursos = {
   mascotas: [
     { tipo: "perro", nombre: "firu", propietario: "Duvan" },
     { tipo: "gato", nombre: "michi", propietario: "Fer" },
+    { tipo: "perro", nombre: "firu", propietario: "Duvan" },
+    { tipo: "gato", nombre: "michi", propietario: "Fer" },
   ],
 };
 
@@ -16,7 +18,7 @@ const server = http.createServer((req, res) => {
 
   //2- Obtener la ruta
   const ruta = urlParseada.pathname;
-  const rutaLimpia = ruta.replace("/", "");
+  let rutaLimpia = ruta.replace("/", "");
 
   //2.1- Obtener method
   const method = req.method.toLowerCase();
@@ -43,18 +45,28 @@ const server = http.createServer((req, res) => {
       buffer = JSON.parse(buffer);
     }
 
+    //sacar indice
+    let indice = null;
+    if (rutaLimpia.indexOf("/") > -1) {
+      let rutaDividida = rutaLimpia.split("/");
+      indice = parseInt(rutaDividida[1], 10);
+      rutaLimpia = rutaDividida[0];
+    }
+
     //2.5 ordenar los datos (data)
     const dataOrganizada = {
+      indice: indice,
       ruta: rutaLimpia,
       query: query,
       method: method,
       headers: headers,
       payload: buffer,
     };
+    console.log(dataOrganizada);
 
     // 2.6 manejador de respuesta HANDLER
     let handler;
-    if (rutaLimpia && enrutador[rutaLimpia][method]) {
+    if (rutaLimpia && enrutador[rutaLimpia] && enrutador[rutaLimpia][method]) {
       handler = enrutador[rutaLimpia][method];
     } else {
       handler = enrutador.noEncontrado;
@@ -78,6 +90,12 @@ const enrutador = {
   },
   mascotas: {
     get: (data, callback) => {
+      if (data.indice >= 0) {
+        if (recursos.mascotas[data.indice]) {
+          return callback(200, recursos.mascotas[data.indice]);
+        }
+        return callback(404, { mensaje: "mascota no encontrada" });
+      }
       callback(200, recursos.mascotas);
     },
     post: (data, callback) => {
