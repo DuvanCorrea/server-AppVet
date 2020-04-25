@@ -1,15 +1,9 @@
+const enrutador = require("./rutas/rutas.js");
+let recursos = require("./recursos/recursos.js");
+
 const http = require("http");
 const { parse } = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
-
-let recursos = {
-  mascotas: [
-    { tipo: "perro", nombre: "firu", propietario: "Duvan" },
-    { tipo: "gato", nombre: "michi", propietario: "Fer" },
-    { tipo: "perro", nombre: "firu", propietario: "Duvan" },
-    { tipo: "gato", nombre: "michi", propietario: "Fer" },
-  ],
-};
 
 const server = http.createServer((req, res) => {
   //1- Obtener url del objeto req
@@ -62,7 +56,7 @@ const server = http.createServer((req, res) => {
       headers: headers,
       payload: buffer,
     };
-    console.log(dataOrganizada);
+    //console.log(dataOrganizada);
 
     // 2.6 manejador de respuesta HANDLER
     let handler;
@@ -83,30 +77,6 @@ const server = http.createServer((req, res) => {
     }
   });
 });
-
-const enrutador = {
-  ruta: (data, callback) => {
-    callback(200, { mensaje: "Esta es ruta" });
-  },
-  mascotas: {
-    get: (data, callback) => {
-      if (data.indice >= 0) {
-        if (recursos.mascotas[data.indice]) {
-          return callback(200, recursos.mascotas[data.indice]);
-        }
-        return callback(404, { mensaje: "mascota no encontrada" });
-      }
-      callback(200, recursos.mascotas);
-    },
-    post: (data, callback) => {
-      recursos.mascotas.push(data.payload);
-      callback(201, data.payload);
-    },
-  },
-  noEncontrado: (data, callback) => {
-    callback(404, { mensaje: "Error 404" });
-  },
-};
 
 server.listen(3000, () => {
   console.warn("Corriendo en el pueto 3000");
