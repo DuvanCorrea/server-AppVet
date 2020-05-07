@@ -3,6 +3,12 @@ const { parse } = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
 
 module.exports = http.createServer((req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.setHeader('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+
   //1- Obtener url del objeto req
   const url = req.url;
   const urlParseada = parse(url, true);
